@@ -1,6 +1,7 @@
 // Building a Chatting App 
 
 const socket = io();
+let timer;
 
 const nameInput = document.querySelector("#name-input");
 const username = document.querySelector(".username")
@@ -63,9 +64,6 @@ sendButton.addEventListener("click", function () {
 // displaying the message in message window through sending a socket event
 
 let container = ``;
-// Assuming you have a WebSocket instance named `socket`
-// Also assuming `messages` is a reference to a DOM element where messages will be displayed
-
 socket.on("message", function (message) {
     let myMessage = message.id === socket.id;
     const container = `
@@ -86,7 +84,7 @@ socket.on("message", function (message) {
 });
 
 
-
+// js to send message through enter key and give space if shift is pressed with enter 
 input.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
         if (event.shiftKey) {
@@ -101,3 +99,17 @@ input.addEventListener("keydown", function (event) {
         }
     }
 });
+
+
+// typing functionality 
+document.querySelector(".main-screen").addEventListener("input", () => {
+    socket.emit("typing")
+})
+
+socket.on("typing", (name) => {
+    document.querySelector(".typing").textContent = `${name.name} is typing`
+    clearInterval(timer)
+    timer = setTimeout(() => {
+        document.querySelector(".typing").textContent = ""
+    }, 1200)
+})

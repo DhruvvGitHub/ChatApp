@@ -41,6 +41,13 @@ io.on("connection", (socket) => {
 
     })
 
+    socket.on("typing", () => {
+        let index = userids.indexOf(socket.id)
+        let name = usernames[index]
+
+        socket.broadcast.emit("typing", {name})
+    })
+
     socket.on("disconnect", () => {
         let index = userids.indexOf(socket.id)
 
